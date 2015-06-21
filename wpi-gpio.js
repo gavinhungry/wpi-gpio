@@ -79,6 +79,10 @@
   gpio.read = function(pin, callback) {
     pin = ensure.num(pin);
     return gpioExec('read', [pin], function(err, val) {
+      if (typeof callback !== 'function') {
+        return;
+      }
+
       if (err) {
         callback(err);
         return;
