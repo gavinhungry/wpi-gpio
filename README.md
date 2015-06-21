@@ -33,13 +33,13 @@ gpio.mode(2, 'out', function(err) {
 ```
 ```javascript
 gpio.read(2, function(err, val) {
-  // val is 1 (HIGH) or 2 (LOW)
+  // value of GPIO pin 2 is 1 (HIGH) or 2 (LOW)
 });
 ```
 
 ```javascript
 gpio.write(2, true, function(err) {
-  // GPIO pin set to HIGH
+  // GPIO pin 2 set to HIGH
 });
 ```
 
