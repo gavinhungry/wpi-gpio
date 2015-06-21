@@ -1,0 +1,26 @@
+{
+  "name": "wpi-gpio",
+  "version": "0.0.0",
+  "author": "Gavin Lloyd <gavinhungry@gmail.com>",
+  "description": "Wrapper around the WiringPi gpio command-line utility",
+  "license": "MIT",
+
+  "keywords": [
+    "raspberry pi",
+    "rpi",
+    "gpio",
+    "wiringpi"
+  ],
+
+  "homepage": "https://github.com/gavinhungry/wpi-gpio",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gavinhungry/wpi-gpio.git"
+  },
+
+  "main": "wpi-gpio.js",
+
+  "dependencies": {
+    "underscore": "1.8.x"
+  }
+}
