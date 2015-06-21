@@ -6,9 +6,10 @@
   "license": "MIT",
 
   "keywords": [
-    "raspberry pi",
-    "rpi",
     "gpio",
+    "pi",
+    "raspberrypi",
+    "rpi",
     "wiringpi"
   ],
 
@@ -18,9 +19,5 @@
     "url": "git://github.com/gavinhungry/wpi-gpio.git"
   },
 
-  "main": "wpi-gpio.js",
-
-  "dependencies": {
-    "underscore": "1.8.x"
-  }
+  "main": "wpi-gpio.js"
 }
