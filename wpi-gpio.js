@@ -88,7 +88,10 @@
         return;
       }
 
-      callback(null, ensure.bin(val));
+      val = ensure.num(val);
+      val = ensure.bin(val);
+
+      callback(null, val);
     });
   };
 
