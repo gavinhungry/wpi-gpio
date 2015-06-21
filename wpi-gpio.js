@@ -67,7 +67,7 @@
   gpio.mode = function(pin, mode, callback) {
     pin = ensure.num(pin);
     mode = ensure.mode(mode);
-    return gpioExec('mode', [pin, mode], callback);
+    gpioExec('mode', [pin, mode], callback);
   };
 
   /**
@@ -78,7 +78,7 @@
    */
   gpio.read = function(pin, callback) {
     pin = ensure.num(pin);
-    return gpioExec('read', [pin], function(err, val) {
+    gpioExec('read', [pin], function(err, val) {
       if (typeof callback !== 'function') {
         return;
       }
@@ -102,7 +102,7 @@
   gpio.write = function(pin, val, callback) {
     pin = ensure.num(pin);
     val = ensure.bin(val);
-    return gpioExec('write', [pin, val], callback);
+    gpioExec('write', [pin, val], callback);
   };
 
   /**
@@ -115,7 +115,7 @@
   gpio.pwm = function(pin, pwm, callback) {
     pin = ensure.num(pin);
     pwm = ensure.pwm(pwm);
-    return gpioExec('pwm', [pin, pwm], callback);
+    gpioExec('pwm', [pin, pwm], callback);
   };
 
   /**
@@ -124,7 +124,7 @@
    * @param {Function} [callback]
    */
   gpio.readall = function(callback) {
-    return gpioExec('readall', null, callback);
+    gpioExec('readall', null, callback);
   };
 
 })();
