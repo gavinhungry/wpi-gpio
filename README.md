@@ -49,7 +49,7 @@ gpio.pwm(2, 100, function(err) {
 });
 ```
 ```javascript
-gpio.readall(function(err, table) {
+gpio.readAll(function(err, table) {
   // GPIO table
 });
 ```

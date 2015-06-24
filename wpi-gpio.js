@@ -126,7 +126,7 @@
    *
    * @param {Function} [callback]
    */
-  gpio.readall = function(callback) {
+  gpio.readAll = function(callback) {
     gpioExec('readall', null, callback);
   };
 
