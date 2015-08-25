@@ -62,12 +62,19 @@
    *
    * @param {Number} pin
    * @param {String} mode
+   * @param {Boolean} val
    * @param {Function} [callback]
    */
-  gpio.mode = function(pin, mode, callback) {
+  gpio.mode = function(pin, mode, val, callback) {
     pin = ensure.num(pin);
     mode = ensure.mode(mode);
-    gpioExec('mode', [pin, mode], callback);
+    gpio.write(pin, val, function(err) {
+      if (err) {
+        return callback(err);
+      }
+
+      gpioExec('mode', [pin, mode], callback);
+    });
   };
 
   /**
@@ -128,6 +135,35 @@
    */
   gpio.readAll = function(callback) {
     gpioExec('readall', null, callback);
+  };
+
+  /**
+   * Set a sequence of pin values
+   *
+   * @param {Number} pin
+   * @param {Array} vals
+   * @param {Number} delay
+   * @param {Function} [callback]
+   */
+  gpio.sequence = function(pin, vals, delay, callback) {
+    var val = vals.shift();
+    if (val === undefined) {
+      return callback(null);
+    }
+
+    gpio.write(pin, val, function(err) {
+      if (err) {
+        return callback(err);
+      }
+
+      if (!vals.length) {
+        return callback(null);
+      }
+
+      setTimeout(function() {
+        gpio.sequence(pin, vals, delay, callback);
+      }, delay);
+    });
   };
 
 })();
