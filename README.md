@@ -48,9 +48,16 @@ gpio.pwm(2, 100, function(err) {
   // GPIO pin 2 PWM value set to 100
 });
 ```
+
 ```javascript
-gpio.readAll(function(err, table) {
-  // GPIO table
+gpio.sequence(2, [0, 1, 0, 1], 100, function(err) {
+  // GPIO pin 2 wrote low, high, low, high with a delay of 100ms
+});
+```
+
+```javascript
+gpio.tap(2, function(err) {
+  // GPIO pin 2 quickly wrote high, low to simulate a "tap"
 });
 ```
 

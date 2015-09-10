@@ -6,6 +6,8 @@
 (function() {
   'use strict';
 
+  var DEFAULT_DELAY = 100; // ms
+
   var exec = require('child_process').exec;
 
   var gpio = module.exports;
@@ -17,18 +19,14 @@
    * Exec a call to gpio
    *
    * @param {String} method
-   * @param {Array} [args]
-   * @param {Function} [callback] (err, stdout)
+   * @param {Array} args
+   * @param {Function} callback (err, stdout)
    */
   var gpioExec = function(method, args, callback) {
     var flag = gpio.BCM_GPIO ? '-g' : '';
-    var cmd = ['gpio', flag, method, (args || []).join(' ')].join(' ');
+    var cmd = ['gpio', flag, method, args.join(' ')].join(' ');
 
     exec(cmd, function(err, stdout, stderr) {
-      if (typeof callback !== 'function') {
-        return;
-      }
-
       if (err) {
         callback(stderr);
         return;
@@ -63,7 +61,7 @@
    * @param {Number} pin
    * @param {String} mode
    * @param {Boolean} val
-   * @param {Function} [callback]
+   * @param {Function} callback
    */
   gpio.mode = function(pin, mode, val, callback) {
     pin = ensure.num(pin);
@@ -81,15 +79,11 @@
    * Read the value of a pin
    *
    * @param {Number} pin
-   * @param {Function} [callback]
+   * @param {Function} callback
    */
   gpio.read = function(pin, callback) {
     pin = ensure.num(pin);
     gpioExec('read', [pin], function(err, val) {
-      if (typeof callback !== 'function') {
-        return;
-      }
-
       if (err) {
         callback(err);
         return;
@@ -107,7 +101,7 @@
    *
    * @param {Number} pin
    * @param {Boolean} val
-   * @param {Function} [callback]
+   * @param {Function} callback
    */
   gpio.write = function(pin, val, callback) {
     pin = ensure.num(pin);
@@ -120,7 +114,7 @@
    *
    * @param {Number} pin
    * @param {Number} pwm
-   * @param {Function} [callback]
+   * @param {Function} callback
    */
   gpio.pwm = function(pin, pwm, callback) {
     pin = ensure.num(pin);
@@ -129,23 +123,19 @@
   };
 
   /**
-   * Get pin table
-   *
-   * @param {Function} [callback]
-   */
-  gpio.readAll = function(callback) {
-    gpioExec('readall', null, callback);
-  };
-
-  /**
    * Set a sequence of pin values
    *
-   * @param {Number} pin
+   * @param {Number} pin null, null
    * @param {Array} vals
-   * @param {Number} delay
-   * @param {Function} [callback]
+   * @param {Number} [delay]
+   * @param {Function} callback
    */
   gpio.sequence = function(pin, vals, delay, callback) {
+    if (typeof delay === 'function') {
+      callback = delay;
+      delay = DEFAULT_DELAY;
+    }
+
     var val = vals.shift();
     if (val === undefined) {
       return callback(null);
@@ -164,6 +154,17 @@
         gpio.sequence(pin, vals, delay, callback);
       }, delay);
     });
+  };
+
+  /**
+   * Simulate "tapping" a pin by toggling it once
+   *
+   * @param {Number} pin
+   * @param {Number} [delay]
+   * @param {Function} callback
+   */
+  gpio.tap = function(pin, delay, callback) {
+    gpio.sequence(pin, [1, 0, 1], delay, callback);
   };
 
 })();
