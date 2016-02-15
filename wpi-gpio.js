@@ -60,18 +60,30 @@
    *
    * @param {Number} pin
    * @param {String} mode
-   * @param {Boolean} val
+   * @param {Boolean} [val]
    * @param {Function} callback
    */
   gpio.mode = function(pin, mode, val, callback) {
     pin = ensure.num(pin);
     mode = ensure.mode(mode);
+
+    var _mode = function() {
+      gpioExec('mode', [pin, mode], callback);
+    };
+
+    if (typeof val === 'function') {
+      callback = val;
+
+      _mode();
+      return;
+    }
+
     gpio.write(pin, val, function(err) {
       if (err) {
         return callback(err);
       }
 
-      gpioExec('mode', [pin, mode], callback);
+      _mode();
     });
   };
 
