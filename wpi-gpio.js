@@ -6,177 +6,109 @@
 (function() {
   'use strict';
 
-  var DEFAULT_DELAY = 100; // ms
-
   var exec = require('child_process').exec;
 
   var gpio = module.exports;
-  gpio.BCM_GPIO = false;
-
-  var MODES = ['in', 'out', 'pwm', 'up', 'down', 'tri'];
+  gpio.BCM_GPIO = true;
 
   /**
    * Exec a call to gpio
    *
    * @param {String} method
+   * @param {Number|String} pin
    * @param {Array} args
-   * @param {Function} callback (err, stdout)
+   * @return {Promise}
    */
-  var gpioExec = function(method, args, callback) {
+  var gpioExec = function(method, pin, args) {
+    pin = parseInt(pin, 10) || 0;
+
     var flag = gpio.BCM_GPIO ? '-g' : '';
-    var cmd = ['gpio', flag, method, args.join(' ')].join(' ');
+    var cmd = ['gpio', flag, method, pin, args.join(' ')].join(' ');
 
-    exec(cmd, function(err, stdout, stderr) {
-      if (err) {
-        callback(stderr);
-        return;
-      }
-
-      callback(null, stdout);
+    return new Promise(function(res, rej) {
+      exec(cmd, function(err, stdout, stderr) {
+        return err ? rej(stderr) : res();
+      });
     });
   };
 
-  var ensure = {
-    num: function(num) {
-      return parseInt(num, 10) || 0;
-    },
-
-    mode: function(mode) {
-      return MODES.indexOf(mode) >= 0 ? mode : MODES[0];
-    },
-
-    bin: function(val) {
-      return val ? 1 : 0;
-    },
-
-    pwm: function(pwm) {
-      pwm = ensure.num(pwm);
-      return pwm < 0 ? 0 : (pwm > 1023 ? 1023 : pwm);
-    }
+  /**
+   * Set an input pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.input = function(pin) {
+    return gpioExec('mode', pin, ['in']);
   };
 
   /**
-   * Set a pin mode
+   * Set an output pin
    *
-   * @param {Number} pin
-   * @param {String} mode
-   * @param {Boolean} [val]
-   * @param {Function} callback
+   * @param {Number|String} pin
+   * @param {Boolean|Number} [val]
+   * @return {Promise}
    */
-  gpio.mode = function(pin, mode, val, callback) {
-    pin = ensure.num(pin);
-    mode = ensure.mode(mode);
-
-    var _mode = function() {
-      gpioExec('mode', [pin, mode], callback);
-    };
-
-    if (typeof val === 'function') {
-      callback = val;
-
-      _mode();
-      return;
-    }
-
-    gpio.write(pin, val, function(err) {
-      if (err) {
-        return callback(err);
-      }
-
-      _mode();
+  gpio.output = function(pin, val) {
+    return gpio.write(pin, val).then(function() {
+      return gpioExec('mode', pin, ['out']);
     });
   };
 
   /**
    * Read the value of a pin
    *
-   * @param {Number} pin
-   * @param {Function} callback
+   * @param {Number|String} pin
+   * @return {Promise} -> {Number}
    */
-  gpio.read = function(pin, callback) {
-    pin = ensure.num(pin);
-    gpioExec('read', [pin], function(err, val) {
-      if (err) {
-        callback(err);
-        return;
-      }
-
-      val = ensure.num(val);
-      val = ensure.bin(val);
-
-      callback(null, val);
+  gpio.read = function(pin) {
+    return gpioExec('read', pin).then(function(val) {
+      return parseInt(val, 10);
     });
   };
 
   /**
-   * Set the value of a pin
+   * Set the value of an output pin
    *
-   * @param {Number} pin
-   * @param {Boolean} val
-   * @param {Function} callback
+   * @param {Number|String} pin
+   * @param {Boolean|Number} val
+   * @return {Promise}
    */
-  gpio.write = function(pin, val, callback) {
-    pin = ensure.num(pin);
-    val = ensure.bin(val);
-    gpioExec('write', [pin, val], callback);
-  };
-
-  /**
-   * Set the PWM value of a pin
-   *
-   * @param {Number} pin
-   * @param {Number} pwm
-   * @param {Function} callback
-   */
-  gpio.pwm = function(pin, pwm, callback) {
-    pin = ensure.num(pin);
-    pwm = ensure.pwm(pwm);
-    gpioExec('pwm', [pin, pwm], callback);
-  };
-
-  /**
-   * Set a sequence of pin values
-   *
-   * @param {Number} pin null, null
-   * @param {Array} vals
-   * @param {Number} [delay]
-   * @param {Function} callback
-   */
-  gpio.sequence = function(pin, vals, delay, callback) {
-    if (typeof delay === 'function') {
-      callback = delay;
-      delay = DEFAULT_DELAY;
-    }
-
-    var val = vals.shift();
+  gpio.write = function(pin, val) {
     if (val === undefined) {
-      return callback(null);
+      return Promise.resolve();
     }
 
-    gpio.write(pin, val, function(err) {
-      if (err) {
-        return callback(err);
-      }
-
-      if (!vals.length) {
-        return callback(null);
-      }
-
-      setTimeout(function() {
-        gpio.sequence(pin, vals, delay, callback);
-      }, delay);
-    });
+    return gpioExec('write', pin, [val ? 1 : 0]);
   };
 
   /**
-   * Simulate "tapping" a pin by toggling it once
+   * Set a sequence of values to an output pin
    *
-   * @param {Number} pin
-   * @param {Number} [delay]
-   * @param {Function} callback
+   * @param {Number|String} pin
+   * @param {Array} vals - values to write
+   * @return {Promise}
    */
-  gpio.tap = function(pin, delay, callback) {
-    gpio.sequence(pin, [1, 0, 1], delay, callback);
+  gpio.sequence = function(pin, vals) {
+    return vals.reduce(function(p, val) {
+      return p.then(function() {
+        return new Promise(function(res, rej) {
+          gpio.write(pin, val).then(function() {
+            setTimeout(res, 100);
+          });
+        });
+      });
+    }, gpio.output(pin));
+  };
+
+  /**
+   * Simulate "tapping" an output pin by toggling it once
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.tap = function(pin) {
+    return gpio.sequence(pin, [1, 0, 1]);
   };
 
 })();
