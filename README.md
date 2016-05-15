@@ -1,6 +1,6 @@
 wpi-gpio
 ========
-Node module wrapping the
+A no-frills wrapper around the
 [WiringPi gpio command-line utility](https://projects.drogon.net/raspberry-pi/wiringpi/the-gpio-utility/).
 
 Installation
@@ -10,58 +10,49 @@ Installation
 
 Usage
 -----
-
 ```javascript
 var gpio = require('wpi-gpio');
 ```
 
 ### Pin numbering
-By default, `wpi-gpio` uses the WiringPi pin numbers. To use BCM_GPIO pin
-numbers instead (the `-g` flag to `gpio`):
+By default, `wpi-gpio` uses the WiringPi pin numbers. To use Broadcom GPIO (BCM)
+pin numbers instead (the `-g` flag to `gpio`):
 
 ```javascript
 gpio.BCM_GPIO = true;
 ```
 
 ### Methods
-
-
 ```javascript
-gpio.mode(2, 'out', function(err) {
-  // GPIO pin 2 set as output pin
-});
-```
-```javascript
-gpio.read(2, function(err, val) {
-  // value of GPIO pin 2 is 1 (high) or 0 (low)
+gpio.input(4).then(function() {
+  // GPIO pin 4 set as input pin
 });
 ```
 
 ```javascript
-gpio.write(2, 1, function(err) {
-  // GPIO pin 2 set to high
+gpio.output(4, 0).then(function() {
+  // GPIO pin 4 set as output pin with value 0 (default value is optional)
 });
 ```
 
 ```javascript
-gpio.pwm(2, 100, function(err) {
-  // GPIO pin 2 PWM value set to 100
+gpio.read(4).then(function(val) {
+  // `val` is binary value of GPIO pin 4
 });
 ```
 
 ```javascript
-gpio.sequence(2, [0, 1, 0, 1], 100, function(err) {
-  // GPIO pin 2 wrote low, high, low, high with a delay of 100ms
+gpio.write(4, 1).then(function() {
+  // GPIO pin 4 value to set 1
 });
 ```
 
 ```javascript
-gpio.tap(2, function(err) {
-  // GPIO pin 2 quickly wrote high, low to simulate a "tap"
+gpio.tap(4).then(function() {
+  // GPIO pin 4 is "tapped" once (same as `gpio.sequence(4, [1, 0, 1])`)
 });
 ```
 
 License
 -------
-Released under the terms of the
-[MIT license](http://tldrlegal.com/license/mit-license). See **LICENSE**.
+This software is released under the terms of the **MIT license**. See `LICENSE`.
