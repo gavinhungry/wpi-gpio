@@ -16,11 +16,12 @@
    *
    * @param {String} method
    * @param {Number|String} pin
-   * @param {Array} args
+   * @param {Array} [args]
    * @return {Promise}
    */
   var gpioExec = function(method, pin, args) {
     pin = parseInt(pin, 10) || 0;
+    args = args || [];
 
     var flag = gpio.BCM_GPIO ? '-g' : '';
     var cmd = ['gpio', flag, method, pin, args.join(' ')].join(' ');
