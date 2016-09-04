@@ -25,10 +25,11 @@
 
     var flag = gpio.BCM_GPIO ? '-g' : '';
     var cmd = ['gpio', flag, method, pin, args.join(' ')].join(' ');
+    cmd = cmd.replace(/\s+/g, ' ').trim();
 
     return new Promise(function(res, rej) {
       exec(cmd, function(err, stdout, stderr) {
-        return err ? rej(stderr) : res();
+        return err ? rej(stderr) : res(stdout);
       });
     });
   };
@@ -47,7 +48,7 @@
    * Set an output pin
    *
    * @param {Number|String} pin
-   * @param {Boolean|Number} [val]
+   * @param {Number} [val]
    * @return {Promise}
    */
   gpio.output = function(pin, val) {
@@ -72,7 +73,7 @@
    * Set the value of an output pin
    *
    * @param {Number|String} pin
-   * @param {Boolean|Number} val
+   * @param {Number} val
    * @return {Promise}
    */
   gpio.write = function(pin, val) {
