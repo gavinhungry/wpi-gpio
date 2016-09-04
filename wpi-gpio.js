@@ -9,7 +9,7 @@
   var exec = require('child_process').exec;
 
   var gpio = module.exports;
-  gpio.BCM_GPIO = true;
+  gpio.BCM_GPIO = false;
 
   /**
    * Exec a call to gpio
