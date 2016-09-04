@@ -1,7 +1,7 @@
 wpi-gpio
 ========
 A no-frills wrapper around the
-[WiringPi gpio command-line utility](https://projects.drogon.net/raspberry-pi/wiringpi/the-gpio-utility/).
+[WiringPi gpio command-line utility](https://projects.drogon.net/raspberry-pi/wiringpi/the-gpio-utility).
 
 Installation
 ------------
@@ -24,32 +24,38 @@ gpio.BCM_GPIO = true;
 
 ### Methods
 ```javascript
-gpio.input(4).then(function() {
-  // GPIO pin 4 set as input pin
+gpio.input(1).then(function() {
+  // GPIO pin 1 set as input pin
 });
 ```
 
 ```javascript
-gpio.output(4, 0).then(function() {
-  // GPIO pin 4 set as output pin with value 0 (default value is optional)
+gpio.output(2, 0).then(function() {
+  // GPIO pin 2 set as output pin with value 0 (default value is optional)
 });
 ```
 
 ```javascript
-gpio.read(4).then(function(val) {
-  // `val` is binary value of GPIO pin 4
+gpio.read(3).then(function(val) {
+  // `val` is numeric value of GPIO pin 3
 });
 ```
 
 ```javascript
 gpio.write(4, 1).then(function() {
-  // GPIO pin 4 value to set 1
+  // GPIO pin 4 value set to 1
 });
 ```
 
 ```javascript
-gpio.tap(4).then(function() {
-  // GPIO pin 4 is "tapped" once (same as `gpio.sequence(4, [1, 0, 1])`)
+gpio.sequence(5, [0, 1, 0 1]).then(function() {
+  // GPIO pin 5 has values written in series, with a 100ms delay between values
+});
+```
+
+```javascript
+gpio.tap(6).then(function() {
+  // GPIO pin 6 is "tapped" once. Same as `gpio.sequence(6, [1, 0, 1])`
 });
 ```
 
