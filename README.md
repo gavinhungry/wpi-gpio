@@ -48,7 +48,7 @@ gpio.write(4, 1).then(function() {
 ```
 
 ```javascript
-gpio.sequence(5, [0, 1, 0 1]).then(function() {
+gpio.sequence(5, [0, 1, 0, 1]).then(function() {
   // GPIO pin 5 has values written in series, with a 100ms delay between values
 });
 ```
