@@ -73,7 +73,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.pullDwon = function(pin) {
+  gpio.pullDown = function(pin) {
     return gpioExec('mode', pin, ['down']);
   };
 
