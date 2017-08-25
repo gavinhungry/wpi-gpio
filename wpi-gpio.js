@@ -58,6 +58,36 @@
   };
 
   /**
+   * Set pull up resistor on a pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.pullUp = function(pin) {
+    return gpioExec('mode', pin, ['up']);
+  };
+
+  /**
+   * Set pull down resistor on a pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.pullDown = function(pin) {
+    return gpioExec('mode', pin, ['down']);
+  };
+
+  /**
+   * Set tri state for a pin
+   *
+   * @param {Number|String} pin
+   * @return {Promise}
+   */
+  gpio.triState = function(pin) {
+    return gpioExec('mode', pin, ['tri']);
+  };
+
+  /**
    * Read the value of a pin
    *
    * @param {Number|String} pin
