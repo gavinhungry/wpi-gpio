@@ -38,12 +38,11 @@ gpio.output(2, 0).then(function() {
 ```javascript
 gpio.input(1).then(function() {
   gpio.pullUp(1).then(function() {
-    //Set as input with pull up 
-    //You can also use gpio.pullDown and gpio.triState
+    // set as input with pull-up resistor
+    // also available are `gpio.pullDown` and `gpio.triState`
   })
 });
 ```
-
 
 ```javascript
 gpio.read(3).then(function(val) {
