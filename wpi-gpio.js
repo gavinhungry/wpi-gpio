@@ -3,12 +3,12 @@
  * https://github.com/gavinhungry/wpi-gpio
  */
 
-(function() {
+(() =>  {
   'use strict';
 
-  var exec = require('child_process').exec;
+  const exec = require('child_process').exec;
 
-  var gpio = module.exports;
+  const gpio = module.exports;
   gpio.BCM_GPIO = false;
 
   /**
@@ -19,16 +19,16 @@
    * @param {Array} [args]
    * @return {Promise}
    */
-  var gpioExec = function(method, pin, args) {
+  let gpioExec = (method, pin, args) => {
     pin = parseInt(pin, 10) || 0;
     args = args || [];
 
-    var flag = gpio.BCM_GPIO ? '-g' : '';
-    var cmd = ['gpio', flag, method, pin, args.join(' ')].join(' ');
+    let flag = gpio.BCM_GPIO ? '-g' : '';
+    let cmd = ['gpio', flag, method, pin, args.join(' ')].join(' ');
     cmd = cmd.replace(/\s+/g, ' ').trim();
 
-    return new Promise(function(res, rej) {
-      exec(cmd, function(err, stdout, stderr) {
+    return new Promise((res, rej) => {
+      exec(cmd, (err, stdout, stderr) => {
         return err ? rej(stderr) : res(stdout);
       });
     });
@@ -40,7 +40,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.input = function(pin) {
+  gpio.input = pin => {
     return gpioExec('mode', pin, ['in']);
   };
 
@@ -51,8 +51,8 @@
    * @param {Number} [val]
    * @return {Promise}
    */
-  gpio.output = function(pin, val) {
-    return gpio.write(pin, val).then(function() {
+  gpio.output = (pin, val) => {
+    return gpio.write(pin, val).then(() =>  {
       return gpioExec('mode', pin, ['out']);
     });
   };
@@ -63,7 +63,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.pullUp = function(pin) {
+  gpio.pullUp = pin => {
     return gpioExec('mode', pin, ['up']);
   };
 
@@ -73,7 +73,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.pullDown = function(pin) {
+  gpio.pullDown = pin => {
     return gpioExec('mode', pin, ['down']);
   };
 
@@ -83,7 +83,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.triState = function(pin) {
+  gpio.triState = pin => {
     return gpioExec('mode', pin, ['tri']);
   };
 
@@ -93,8 +93,8 @@
    * @param {Number|String} pin
    * @return {Promise} -> {Number}
    */
-  gpio.read = function(pin) {
-    return gpioExec('read', pin).then(function(val) {
+  gpio.read = pin => {
+    return gpioExec('read', pin).then(val => {
       return parseInt(val, 10);
     });
   };
@@ -106,7 +106,7 @@
    * @param {Number} val
    * @return {Promise}
    */
-  gpio.write = function(pin, val) {
+  gpio.write = (pin, val) => {
     if (val === undefined) {
       return Promise.resolve();
     }
@@ -121,11 +121,11 @@
    * @param {Array} vals - values to write
    * @return {Promise}
    */
-  gpio.sequence = function(pin, vals) {
-    return vals.reduce(function(p, val) {
-      return p.then(function() {
-        return new Promise(function(res, rej) {
-          gpio.write(pin, val).then(function() {
+  gpio.sequence = (pin, vals) => {
+    return vals.reduce((p, val) => {
+      return p.then(() =>  {
+        return new Promise((res, rej) => {
+          gpio.write(pin, val).then(() =>  {
             setTimeout(res, 100);
           });
         });
@@ -139,7 +139,7 @@
    * @param {Number|String} pin
    * @return {Promise}
    */
-  gpio.tap = function(pin) {
+  gpio.tap = pin => {
     return gpio.sequence(pin, [1, 0, 1]);
   };
 
