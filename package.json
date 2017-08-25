@@ -1,6 +1,6 @@
 {
   "name": "wpi-gpio",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "author": "Gavin Lloyd <gavinhungry@gmail.com>",
   "description": "Wrapper around the WiringPi gpio command-line utility",
   "license": "MIT",
