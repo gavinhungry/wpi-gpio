@@ -25,7 +25,7 @@
   },
 
   "devDependencies": {
-    "proxyquire": "1.7.x",
-    "tap": "7.0.x"
+    "proxyquire": "1.8.x",
+    "tap": "10.7.x"
   }
 }
